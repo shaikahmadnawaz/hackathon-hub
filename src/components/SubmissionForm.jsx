@@ -1,113 +1,143 @@
-import React, { useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
-const SubmissionForm = () => {
-  const history = useHistory();
+function SubmissionForm({ addSubmission }) {
+  const [submission, setSubmission] = useState({
+    id: "",
+    title: "",
+    summary: "",
+    description: "",
+    coverImage: "",
+    hackthonName: "",
+    hackthonStartDate: "",
+    hackthonEndDate: "",
+    githubRepoLink: "",
+    otherLinks: "",
+  });
 
-  const titleInput = useRef(null);
-  const summaryInput = useRef(null);
-  const descriptionInput = useRef(null);
-  const coverImageInput = useRef(null);
-  const hackathonNameInput = useRef(null);
-  const hackathonStartDateInput = useRef(null);
-  const hackathonEndDateInput = useRef(null);
-  const githubRepoLinkInput = useRef(null);
-  const otherLinksInput = useRef(null);
-
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const handleSubmit = (event) => {
-    if (!titleInput.current.value.trim()) {
-      setErrorMessage("Please enter a title");
-      event.preventDefault();
-      return;
-    }
-    setErrorMessage("");
-    submitHandler(event);
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setSubmission({ ...submission, [name]: value });
   };
 
-  const submitHandler = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    const submission = {
-      title: titleInput.current.value,
-      summary: summaryInput.current.value,
-      description: descriptionInput.current.value,
-      coverImage: coverImageInput.current.value,
-      hackathonName: hackathonNameInput.current.value,
-      hackathonStartDate: hackathonStartDateInput.current.value,
-      hackathonEndDate: hackathonEndDateInput.current.value,
-      githubRepoLink: githubRepoLinkInput.current.value,
-      otherLinks: otherLinksInput.current.value,
-    };
-    const submissions = JSON.parse(localStorage.getItem("submissions")) || [];
-    submissions.push(submission);
-    localStorage.setItem("submissions", JSON.stringify(submissions));
-    // Redirect to the Submissions page
-    history.push("/submissions");
+    if (
+      !submission.title ||
+      !submission.summary ||
+      !submission.description ||
+      !submission.coverImage ||
+      !submission.hackthonName ||
+      !submission.hackthonStartDate ||
+      !submission.hackthonEndDate ||
+      !submission.githubRepoLink
+    ) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+    const newSubmission = { ...submission, id: uuidv4() };
+    addSubmission(newSubmission);
+    setSubmission({
+      id: "",
+      title: "",
+      summary: "",
+      description: "",
+      coverImage: "",
+      hackthonName: "",
+      hackthonStartDate: "",
+      hackthonEndDate: "",
+      githubRepoLink: "",
+      otherLinks: "",
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="title">Title</label>
-        <input type="text" id="title" ref={titleInput} required />
-      </div>
-      <div>
-        <label htmlFor="summary">Summary</label>
-        <textarea id="summary" ref={summaryInput} required />
-      </div>
-      <div>
-        <label htmlFor="description">Description</label>
-        <textarea id="description" ref={descriptionInput} required />
-      </div>
-      <div>
-        <label htmlFor="cover-image">Cover Image</label>
-        <input type="text" id="cover-image" ref={coverImageInput} required />
-      </div>
-      <div>
-        <label htmlFor="hackathon-name">Hackathon Name</label>
+    <div className="submission-form">
+      <h2>Create a new submission</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="title">Title*</label>
         <input
           type="text"
-          id="hackathon-name"
-          ref={hackathonNameInput}
+          id="title"
+          name="title"
+          value={submission.title}
+          onChange={handleInputChange}
           required
         />
-      </div>
-      <div>
-        <label htmlFor="hackathon-start-date">Hackathon Start Date</label>
-        <input
-          type="date"
-          id="hackathon-start-date"
-          ref={hackathonStartDateInput}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="hackathon-end-date">Hackathon End Date</label>
-        <input
-          type="date"
-          id="hackathon-end-date"
-          ref={hackathonEndDateInput}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="github-repo-link">GitHub Repository Link</label>
+        <label htmlFor="summary">Summary*</label>
         <input
           type="text"
-          id="github-repo-link"
-          ref={githubRepoLinkInput}
+          id="summary"
+          name="summary"
+          value={submission.summary}
+          onChange={handleInputChange}
           required
         />
-      </div>
-      <div>
-        <label htmlFor="other-links">Other Links (optional)</label>
-        <input type="text" id="other-links" ref={otherLinksInput} />
-      </div>
-      {errorMessage && <div>{errorMessage}</div>}
-      <button type="submit">Submit</button>
-    </form>
+        <label htmlFor="description">Description*</label>
+        <textarea
+          id="description"
+          name="description"
+          value={submission.description}
+          onChange={handleInputChange}
+          required
+        ></textarea>
+        <label htmlFor="coverImage">Cover Image*</label>
+        <input
+          type="text"
+          id="coverImage"
+          name="coverImage"
+          value={submission.coverImage}
+          onChange={handleInputChange}
+          required
+        />
+        <label htmlFor="hackthonName">Hackthon Name*</label>
+        <input
+          type="text"
+          id="hackthonName"
+          name="hackthonName"
+          value={submission.hackthonName}
+          onChange={handleInputChange}
+          required
+        />
+        <label htmlFor="hackthonStartDate">Hackthon Start Date*</label>
+        <input
+          type="date"
+          id="hackthonStartDate"
+          name="hackthonStartDate"
+          value={submission.hackthonStartDate}
+          onChange={handleInputChange}
+          required
+        />
+        <label htmlFor="hackthonEndDate">Hackthon End Date*</label>
+        <input
+          type="date"
+          id="hackthonEndDate"
+          name="hackthonEndDate"
+          value={submission.hackthonEndDate}
+          onChange={handleInputChange}
+          required
+        />
+        <label htmlFor="githubRepoLink">Github Repository Link*</label>
+        <input
+          type="text"
+          id="githubRepoLink"
+          name="githubRepoLink"
+          value={submission.githubRepoLink}
+          onChange={handleInputChange}
+          required
+        />
+        <label htmlFor="otherLinks">Other Links</label>
+        <input
+          type="text"
+          id="otherLinks"
+          name="otherLinks"
+          value={submission.otherLinks}
+          onChange={handleInputChange}
+        />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
   );
-};
+}
 
 export default SubmissionForm;

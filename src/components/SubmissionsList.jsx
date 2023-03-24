@@ -1,32 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-function SubmissionList() {
-  const [submissions, setSubmissions] = useState([]);
-
-  useEffect(() => {
-    // Fetch submissions data from local storage or API
-    // and set it to the submissions state
-  }, []);
-
+function SubmissionsList({ submissions, onSubmissionClick }) {
   return (
     <div>
-      <h1>All Submissions</h1>
-      {submissions.map((submission) => (
-        <div key={submission.id}>
-          <h2>{submission.title}</h2>
-          <p>{submission.summary}</p>
-          <img src={submission.coverImage} alt={submission.title} />
-          <p>Hackthon name: {submission.hackthonName}</p>
-          <p>Start date: {submission.hackthonStartDate}</p>
-          <p>End date: {submission.hackthonEndDate}</p>
-          <p>Github repository link: {submission.githubLink}</p>
-          {submission.otherLinks && <p>Other links: {submission.otherLinks}</p>}
-          <button>Edit</button>
-          <button>Delete</button>
-        </div>
-      ))}
+      <h2>Submissions</h2>
+      <ul>
+        {submissions.map((submission) => (
+          <li key={submission.id} onClick={() => onSubmissionClick(submission)}>
+            <div>
+              <h3>{submission.title}</h3>
+              <p>{submission.summary}</p>
+              <img src={submission.coverImage} alt={submission.title} />
+            </div>
+            <div>
+              <p>Hackathon Name: {submission.hackathonName}</p>
+              <p>Hackathon Start Date: {submission.hackathonStartDate}</p>
+              <p>Hackathon End Date: {submission.hackathonEndDate}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default SubmissionList;
+export default SubmissionsList;
